@@ -1,4 +1,6 @@
-FROM python:3.10-alpine
+FROM alpine
+
+RUN apk add --no-cache python3 uwsgi uwsgi-python3 py3-pip
 
 ADD ./app/requirements.txt /requirements.txt
 RUN pip install --no-cache-dir -r /requirements.txt
@@ -9,4 +11,4 @@ EXPOSE 80
 
 WORKDIR /app
 
-CMD [ "flask", "run", "--host=0.0.0.0", "--port=80" ]
+CMD [ "uwsgi", "--plugin=python3", "--socket=0.0.0.0:80", "--protocol=http", "--mount=/=app.py", "--callable=app" ]
