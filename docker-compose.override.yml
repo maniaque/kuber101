@@ -1,0 +1,6 @@
+services:
+  app:
+    volumes:
+      - ./app:/app
+    environment:
+      FLASK_DEBUG: 1

@@ -1,0 +1,16 @@
+services:
+  app:
+    build: .
+    image: maniaque/pytime
+    ports:
+      - "8080:80"
+    environment:
+      PYTHONPYCACHEPREFIX: /tmp
+  
+  tests:
+    build: .
+    image: maniaque/pytime
+    command: pytest
+    environment:
+      PYTHONPYCACHEPREFIX: /tmp
+    profiles: [ "tests" ]
