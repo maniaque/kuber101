@@ -1,0 +1,13 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: pytime-service
+spec:
+  selector:
+    app: pytime
+  ports:
+  - protocol: "TCP"
+    port: 80
+    targetPort: 80
+...
