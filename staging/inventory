@@ -1,0 +1,4 @@
+staging ansible_host=172.30.44.75 ansible_user=admin ansible_password=astralinux
+
+[all:vars]
+ansible_python_interpreter = /usr/bin/python3

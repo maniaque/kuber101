@@ -1,0 +1,65 @@
+---
+- name: zero level actions
+  hosts: all
+  gather_facts: no
+  become: yes
+
+  tasks:
+    - name: apt update
+      raw: apt update
+
+    - name: install python3
+      raw: apt install -qy --no-install-recommends python3
+
+- name: app setup
+  hosts: all
+  gather_facts: no
+  become: yes
+
+  vars:
+    app_directory: /opt/pytime
+
+  tasks:
+    - name: install docker.io
+      apt:
+        name: docker.io
+        state: present
+        update_cache: yes
+
+    - name: install docker-compose
+      get_url:
+        url: https://github.com/docker/compose/releases/download/v2.14.0/docker-compose-linux-x86_64
+        dest: /usr/local/bin/docker-compose
+        mode: '0755'
+
+    - name: create directory
+      file:
+        state: directory
+        path: "{{ app_directory }}"
+
+    - name: create docker-compose.yml
+      copy:
+        dest: "{{ app_directory }}/docker-compose.yml"
+        content: |
+          services:
+            app:
+              image: maniaque/pytime
+              restart: always
+              ports:
+                - "80:80"
+      notify: restart pytime
+
+    - name: start pytime
+      shell:
+        cmd: docker-compose up -d
+        chdir: "{{ app_directory }}"
+
+  handlers:
+    - name: restart pytime
+      shell:
+        cmd: "{{ item }}"
+        chdir: "{{ app_directory }}"
+      loop:
+        - docker-compose down
+        - docker-compose up -d
+...
