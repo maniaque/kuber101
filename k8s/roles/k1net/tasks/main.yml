@@ -1,0 +1,9 @@
+---
+- name: render template
+  template:
+    src: "templates/{{ k1net_cni }}.yml.j2"
+    dest: "{{ k1net_dest }}"
+  vars:
+    template_interface: "{{ k1net_interface }}"
+    template_pod_cidr: "{{ k1net_cidr }}"
+...

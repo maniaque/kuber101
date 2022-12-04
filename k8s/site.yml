@@ -1,0 +1,26 @@
+---
+- name: prepare hosts
+  import_playbook: prepare.yml
+  vars:
+    k1ansible_version: 1.22.16-00
+
+- name: init master
+  import_playbook: master.yml
+  vars:
+    pod_cidr: 10.244.0.0/16
+    master_ip: "{{ hostvars['node1']['ansible_host'] }}"
+    node_ip: "{{ hostvars['node1']['ansible_host'] }}"
+    master_token: abcdef.k1s0static0token
+    # flannel needs network_interface, calico does not
+    network_plugin: flannel
+    network_interface: eth0
+
+# ansible_enp0s8.ipv4.address
+
+- name: join nodes
+  import_playbook: node.yml
+  vars:
+    master_ip: "{{ hostvars['node1']['ansible_host'] }}:6443"
+    node_ip: "{{ ansible_default_ipv4.address }}"
+    master_token: abcdef.k1s0static0token
+...

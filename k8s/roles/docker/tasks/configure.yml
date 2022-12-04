@@ -1,0 +1,24 @@
+---
+- name: install pip for docker
+  pip:
+    name: docker
+
+- name: configure docker
+  copy:
+    content: '{ "userland-proxy": false, "exec-opts": ["native.cgroupdriver=systemd"] }'
+    dest: /etc/docker/daemon.json
+  notify: restart docker
+
+- name: enable docker autostart
+  systemd:
+    name: docker
+    enabled: yes
+    state: started
+
+- name: add users to docker group
+  user:
+    name: "{{ item }}"
+    append: yes
+    groups: docker
+  loop: "{{ docker_users }}"
+...

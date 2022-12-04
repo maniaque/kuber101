@@ -1,0 +1,8 @@
+[master]
+node1 ansible_host=172.30.44.78 ansible_user=astra ansible_password=astra2022
+
+[node]
+node2 ansible_host=172.30.44.79 ansible_user=astra ansible_password=astra2022
+
+[all:vars]
+ansible_python_interpreter = /usr/bin/python3

@@ -1,0 +1,33 @@
+---
+- name: install packages
+  apt:
+    name:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - gnupg-agent
+      - software-properties-common
+    update_cache: yes
+
+- name: add docker key
+  apt_key:
+    url: "{{ docker_repo }}/gpg"
+    state: present
+
+- name: add apt repo
+  apt_repository:
+    repo: "deb [arch=amd64] {{ docker_repo }} {{ docker_distribution }} stable"
+    state: present
+    filename: docker
+
+- name: install packages
+  apt:
+    name:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+      - python3-pip
+    update_cache: yes
+
+- import_tasks: configure.yml
+...

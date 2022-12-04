@@ -1,0 +1,63 @@
+---
+- name: init master
+  hosts: master
+  gather_facts: yes
+  become: yes
+
+  tasks:
+    - name: init cluster
+      command:
+        cmd: >
+          kubeadm init
+          --apiserver-advertise-address={{master_ip}}
+          --pod-network-cidr={{pod_cidr}}
+          --ignore-preflight-errors=NumCPU
+          --token={{master_token}}
+        creates: /etc/kubernetes/admin.conf
+
+    - name: remove taint from master
+      shell: "kubectl taint nodes --all {{ item }}"
+      environment:
+        KUBECONFIG: /etc/kubernetes/admin.conf
+      loop:
+        - node-role.kubernetes.io/master-
+        # - node-role.kubernetes.io/control-plane-
+
+    - name: remove $HOME/.kube
+      shell: rm -rf $HOME/.kube
+
+    - name: ip for kubelet
+      copy:
+        content: |
+          KUBELET_EXTRA_ARGS="--node-ip={{node_ip}}"
+        dest: /etc/default/kubelet
+      notify: restart kubelet
+
+    - name: render network template 
+      include_role:
+        name: k1net
+      vars:
+        k1net_cni: "{{ network_plugin }}"
+        k1net_interface: "{{ network_interface | default('eth0') }}"
+        k1net_cidr: "{{ pod_cidr }}"
+        k1net_dest: /tmp/network.yml
+
+    - name: apply network template
+      shell: kubectl apply -f /tmp/network.yml
+      environment:
+        KUBECONFIG: /etc/kubernetes/admin.conf
+
+    - name: remove $HOME/.kube
+      shell: rm -rf $HOME/.kube
+
+    - name: fetch .kube/config
+      fetch:
+        src: /etc/kubernetes/admin.conf
+        dest: config
+
+  handlers:
+    - name: restart kubelet
+      systemd:
+        name: kubelet
+        state: restarted
+...

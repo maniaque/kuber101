@@ -1,0 +1,31 @@
+---
+- name: join
+  hosts: node
+  gather_facts: yes
+  become: yes
+
+  tasks:
+    - name: ip for kubelet
+      copy:
+        content: |
+          KUBELET_EXTRA_ARGS="--node-ip={{node_ip}}"
+        dest: /etc/default/kubelet
+      notify: restart kubelet
+
+    - name: restart kubelet before join
+      meta: flush_handlers
+
+    - name: join cluster
+      command:
+        cmd: >
+          kubeadm join {{master_ip}}
+          --token {{master_token}}
+          --discovery-token-unsafe-skip-ca-verification
+        creates: /etc/kubernetes/kubelet.conf
+
+  handlers:
+    - name: restart kubelet
+      systemd:
+        name: kubelet
+        state: restarted
+...
