@@ -1,0 +1,22 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pytime-deployment
+spec:
+  selector:
+    matchLabels:
+      app: pytime
+  replicas: 4
+  template:
+    metadata:
+      labels:
+        app: pytime
+    spec:
+      containers:
+      - name: pytime
+        image: maniaque/pytime
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 80
+...
