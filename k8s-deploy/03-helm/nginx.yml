@@ -1,0 +1,4 @@
+controller:
+  hostNetwork: true
+  replicaCount: 2
+  minAvailable: 1

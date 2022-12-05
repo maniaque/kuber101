@@ -1,0 +1,11 @@
+ingress: true
+
+nodePort: 30003
+
+image: maniaque/pytime
+
+replicas: 4
+
+# variables, not customization
+servicePort: 80
+serviceName: pytime
