@@ -20,8 +20,8 @@
       environment:
         KUBECONFIG: /etc/kubernetes/admin.conf
       loop:
-        - node-role.kubernetes.io/master-
-        # - node-role.kubernetes.io/control-plane-
+        # - node-role.kubernetes.io/master-
+        - node-role.kubernetes.io/control-plane-
 
     - name: remove $HOME/.kube
       shell: rm -rf $HOME/.kube

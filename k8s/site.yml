@@ -2,7 +2,7 @@
 - name: prepare hosts
   import_playbook: prepare.yml
   vars:
-    k1ansible_version: 1.22.16-00
+    k1ansible_version: 1.25.4-00
 
 - name: init master
   import_playbook: master.yml
