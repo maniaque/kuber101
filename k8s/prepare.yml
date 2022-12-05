@@ -48,24 +48,6 @@
         state: present
         filename: kubernetes
 
-    # - name: add br_netfilter module
-    #   modprobe:
-    #     name: br_netfilter
-    #     state: present
-
-    # - name: enable permanent br_netfilter
-    #   copy:
-    #     dest: /etc/modules-load.d/br_netfilter.conf
-    #     content: |
-    #       br_netfilter
-          
-    # - name: enable forwarding
-    #   copy:
-    #     dest: /etc/sysctl.d/9999-router.conf
-    #     content: |
-    #       net.ipv4.ip_forward = 1
-    #   notify: sysctl reload
-
     - name: k8s packages
       apt:
         name: 
@@ -82,24 +64,8 @@
       loop:
         - kubelet
         - kubeadm
-    
-
-  #   - name: set up docker
-  #     copy:
-  #       content: |
-  #         {
-  #           "userland-proxy": false,
-  #           "exec-opts": ["native.cgroupdriver=systemd"]
-  #         }
-  #       dest: /etc/docker/daemon.json
-  #     notify: restart docker
-            
+                
   handlers:
     - name: sysctl reload
       command: sysctl --system
-
-    # - name: restart docker
-    #   systemd:
-    #     name: docker
-    #     state: restarted
 ...
